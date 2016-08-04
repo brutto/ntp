@@ -3,9 +3,15 @@
 - name: Add the OS specific varibles
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Install the required packages
+- name: Install the required Debian packages
   apt: name={{ item }} state=present
   with_items: "{{ntp_pkgs}}"
+  when: ansible_os_family == 'Debian'
+
+- name: Install the required RedHat packages
+  yum: name={{ item }} state=present
+  with_items: "{{ntp_pkgs}}"
+  when: ansible_os_family == 'RedHat'
 
 - name: Copy the ntp.conf template file
   template: src=ntp.conf.j2 dest=/etc/ntp.conf
